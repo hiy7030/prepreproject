@@ -1,37 +1,40 @@
 package com.prepreproject.member.controller;
 
+import com.prepreproject.member.dto.MemberDto;
 import com.prepreproject.member.entity.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("v1/members")
 public class memberController {
     //회원 등록
     // request body : json -> object 변환 필요, response body: object -> json 변환 필요
     @PostMapping
-    public ResponseEntity postMember(Member member) {
+    public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post postMemberDto) {
 
-        return new ResponseEntity<>(member, HttpStatus.CREATED);
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
     //회원 정보 수정
     // request body : patch 정보 json -> object 변환 필요, response body : object -> json 변환 필요
     // request path 정보 필요 -> path : memberId
     @PatchMapping("/{member-id}")
     public ResponseEntity  patchMember(@PathVariable("member-id") @Positive long memberId,
-                                       Member member) {
-        return new ResponseEntity<>(member, HttpStatus.OK);
+                                       @Valid @RequestBody MemberDto.Patch patchMemberDto) {
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
     //회원 조회
     // request body : x, request path : memberId, response body: object -> json 변환 필요
     @GetMapping("/{member-id}")
-    public ResponseEntity  getMember(@PathVariable("member-id") @Positive long memberId,
-                                     Member member) {
-        return new ResponseEntity<>(member, HttpStatus.OK);
+    public ResponseEntity  getMember(@PathVariable("member-id") @Positive long memberId) {
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
     //회원 목록 조회
     // request body : x, request path :x , response body : pagenation
