@@ -13,15 +13,24 @@ public class Coffee {
     private String engName;
     private int price;
     private String coffeeCode;
+    private CoffeeStatus coffeeStatus = CoffeeStatus.COFFEE_FOR_SALE;
 
-    private enum coffeeStatus {
+    public Coffee(String korName, String engName, int price, String coffeeCode, CoffeeStatus coffeeStatus) {
+        this.korName = korName;
+        this.engName = engName;
+        this.price = price;
+        this.coffeeCode = coffeeCode;
+        this.coffeeStatus = coffeeStatus;
+    }
+
+    public enum CoffeeStatus {
         COFFEE_FOR_SALE("판매중"),
         COFFEE_SOLD_OUT("판매중지");
 
         @Getter
         private String status;
 
-        coffeeStatus(String status) {
+        CoffeeStatus(String status) {
             this.status = status;
         }
     }

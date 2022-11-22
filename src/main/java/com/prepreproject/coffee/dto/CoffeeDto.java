@@ -1,5 +1,7 @@
 package com.prepreproject.coffee.dto;
 
+import com.prepreproject.coffee.entity.Coffee;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
@@ -24,6 +26,8 @@ public class CoffeeDto {
         private String coffeeCode;
     }
 
+    @Getter
+    @Setter
     public static class Patch {
 
         private long coffeeId;
@@ -39,13 +43,19 @@ public class CoffeeDto {
 
         @Pattern(regexp = "^[A-Z]{3}$")
         private String coffeeCode;
+
+        private Coffee.CoffeeStatus coffeeStatus;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
     public static class Response {
         private long coffeeId;
         private String korName;
         private String engName;
         private int price;
         private String coffeeCode;
+        private Coffee.CoffeeStatus coffeeStatus;
     }
 }

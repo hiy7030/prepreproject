@@ -1,5 +1,6 @@
 package com.prepreproject.member.dto;
 
+import com.prepreproject.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +42,8 @@ public class MemberDto {
         @Pattern(regexp = "^010-\\d{3,4}-\\d{4}$")
         private String phone;
 
+        private Member.MemberStatus memberStatus;
+
     }
 
     @Getter
@@ -52,6 +55,7 @@ public class MemberDto {
         private String email;
         private String name;
         private String phone;
+        private Member.MemberStatus memberStatus;
 
     }
 }

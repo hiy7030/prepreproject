@@ -9,7 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Order {
     private Long orderId;
-    private enum orderStatus {
+    private OrderStatus orderStatus = OrderStatus.ORDER_REQUEST;
+    public enum OrderStatus {
         ORDER_REQUEST(1, "주문 요청"),
         ORDER_CONFIRM(2, "주문 확정"),
         ORDER_COMPLETE(3, "주문 처리 완료"),
@@ -21,7 +22,7 @@ public class Order {
         @Getter
         private String status;
 
-        orderStatus(int stepNumber, String status) {
+        OrderStatus(int stepNumber, String status) {
             this.stepNumber = stepNumber;
             this.status = status;
         }
