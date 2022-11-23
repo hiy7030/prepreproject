@@ -3,6 +3,7 @@ package com.prepreproject.member.controller;
 import com.prepreproject.dto.MultiResponseDto;
 import com.prepreproject.dto.SingleResponseDto;
 import com.prepreproject.member.dto.MemberDto;
+import com.prepreproject.member.entity.Member;
 import com.prepreproject.member.mapper.MemberMapper;
 import com.prepreproject.member.service.MemberService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @Validated
@@ -33,7 +35,11 @@ public class MemberController {
     @PostMapping
     public ResponseEntity postMember(@Valid @RequestBody MemberDto.Post postMemberDto) {
 
-            return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.CREATED);
+        Member member = memberService.createMember(mapper.memberPostDtoToMember(postMemberDto));
+
+        MemberDto.Response response = mapper.memberToMemberResponseDto(member);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
     //회원 정보 수정
     // request body : patch 정보 json -> object 변환 필요, response body : object -> json 변환 필요
@@ -41,22 +47,37 @@ public class MemberController {
     @PatchMapping("/{member-id}")
     public ResponseEntity  patchMember(@PathVariable("member-id") @Positive long memberId,
                                        @Valid @RequestBody MemberDto.Patch patchMemberDto) {
-        return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.OK);
+
+        Member member = mapper.memberPatchDtoToMember(patchMemberDto);
+        member.setMemberId(memberId);
+
+       Member updatedMember = memberService.updateMember(member);
+
+        MemberDto.Response response = mapper.memberToMemberResponseDto(updatedMember);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
     //회원 조회
     // request body : x, request path : memberId, response body: object -> json 변환 필요
     @GetMapping("/{member-id}")
     public ResponseEntity  getMember(@PathVariable("member-id") @Positive long memberId) {
-        return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.OK);
+
+        Member member = memberService.findMember(memberId);
+
+        MemberDto.Response response = mapper.memberToMemberResponseDto(member);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
     //회원 목록 조회
     // request body : x, request path :x , response body : pagenation
     // request parameter -> int page, int size
     @GetMapping
-    public ResponseEntity getMembers(@RequestParam int page,
-                                   @RequestParam int size) {
+    public ResponseEntity getMembers() {
 
-        return new ResponseEntity<>(new MultiResponseDto<>(), HttpStatus.OK);
+        List<Member> members = memberService.findMembers();
+        List<MemberDto.Response> responses = mapper.membersToMemberResponseDtos(members);
+
+        return new ResponseEntity<>(new MultiResponseDto<>(responses), HttpStatus.OK);
     }
     //회원 삭제
     // request body : x, request path : memberId, response body : x

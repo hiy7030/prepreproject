@@ -4,6 +4,8 @@ import com.prepreproject.member.dto.MemberDto;
 import com.prepreproject.member.entity.Member;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
     // postDto -> member
@@ -12,4 +14,6 @@ public interface MemberMapper {
     Member memberPatchDtoToMember(MemberDto.Patch memberPatchDto);
     // member -> responseDto
     MemberDto.Response memberToMemberResponseDto(Member member);
+    // List<Member> -> List<responseDto>??????
+    List<MemberDto.Response> membersToMemberResponseDtos(List<Member> members);
 }

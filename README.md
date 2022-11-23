@@ -42,3 +42,25 @@
   - Mapstruct : `'org.mapstruct:mapstruct:1.4.2.Final'`, `'org.mapstruct:mapstruct-processor:1.4.2.Final'`
 
 ***
+
+### 11월 23일
+- API 계층 - Service 계층 연동 
+- 목록 조회 Mapper 구현 및 응답 데이터 반환 여부 확인 
+- 1차 테스팅 완료
+- Service 클래스 1차 비즈니스 로직 구현(데이터 액세스 계층 연동 필요)
+- ⭐ 데이터 액세스 계층 구현 전, 미리 JPA 의존 라이브러리 연동 시, 에러 발생! 주의할 것
+```
+    Failed to configure a DataSource: 
+        'url' attribute is not specified and no embedded datasource could be configured.
+
+        Reason: Failed to determine a suitable driver class
+```
+데이터 액세스 계층에 대한 의존 라이브러리를 추가했음에도 데이터 액세스 계층에 대한 정보(연결)를 스프링에 등록하지 않아 발생한 에러
+  - 해결 방안 1 : 애초에 의존 라이브러리 추가 X 
+  - 해결 방안 2 : 데이터베이스 설정 정보 연동을 위해, H2와 같은 DB 설정(의존 라이브러리)을 추가한다.
+  - 해결 방안 3 : 엔트리 포인트 클래스에 추가되어 있는 애너테이션 @SpringBootApplication 애트리뷰트를 추가하는 방법! </br>
+`exclude = DataSourceAutoConfiguration.class`
+</br> exclude 애트리뷰트는 입력한 클래스를 자동 설정에서 제외시킨다. `DataSourceAutoConfiguration.class`는 데이터베이스에 대한 자동 구성을 담당하는 클래스로 해당 클래스를
+제외하면 데이터베이스 연결에 대한 에러가 발생하지 않는다. -> 추후 DB를 비활성화하고 테스팅하기에 유용한 방법! 
+  </br> <a href = "https://www.baeldung.com/spring-data-disable-auto-config"> 참고 블로그 </a>
+***

@@ -10,6 +10,11 @@ import lombok.Setter;
 public class Order {
     private Long orderId;
     private OrderStatus orderStatus = OrderStatus.ORDER_REQUEST;
+
+    public Order(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public enum OrderStatus {
         ORDER_REQUEST(1, "주문 요청"),
         ORDER_CONFIRM(2, "주문 확정"),

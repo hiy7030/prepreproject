@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @Validated
@@ -32,25 +33,41 @@ public class CoffeeController {
     @PostMapping
     public ResponseEntity postCoffee(@Valid @RequestBody CoffeeDto.Post coffeePostDto) {
 
-        Coffee coffee = mapper.coffeePostDtoToCoffee(coffeePostDto);
+        Coffee coffee = coffeeService.createCoffee(mapper.coffeePostDtoToCoffee(coffeePostDto));
+        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(coffee);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.CREATED);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
     //커피 정보 수정
     @PatchMapping("/{coffee-id}")
     public ResponseEntity  patchCoffee(@PathVariable("coffee-id") @Positive long coffeeId,
                                        @Valid @RequestBody CoffeeDto.Patch coffeePatchDto) {
-        return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.OK);
+
+        Coffee coffee = coffeeService.updateCoffee(mapper.coffeePatchDtoToCoffee(coffeePatchDto));
+        coffee.setCoffeeId(coffeeId);
+
+        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(coffee);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
     // 커피 조회
     @GetMapping("/{coffee-id}")
     public ResponseEntity  getCoffee(@PathVariable("coffee-id") @Positive long coffeeId) {
-        return new ResponseEntity<>(new SingleResponseDto<>(), HttpStatus.OK);
+
+
+       Coffee coffee = coffeeService.findCoffee(coffeeId);
+        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(coffee);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
     // 커피 목록 조회
     @GetMapping
     public ResponseEntity getCoffees() {
-        return new ResponseEntity<>(new MultiResponseDto<>(), HttpStatus.OK);
+
+        List<Coffee> coffees = coffeeService.findCoffees();
+        List<CoffeeDto.Response> responses = mapper.coffeesToCoffeeResponseDtos(coffees);
+
+        return new ResponseEntity<>(new MultiResponseDto<>(responses), HttpStatus.OK);
     }
     // 커피 삭제
     @DeleteMapping("/{coffee-id}")
