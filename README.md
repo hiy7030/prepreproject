@@ -64,3 +64,13 @@
 제외하면 데이터베이스 연결에 대한 에러가 발생하지 않는다. -> 추후 DB를 비활성화하고 테스팅하기에 유용한 방법! 
   </br> <a href = "https://www.baeldung.com/spring-data-disable-auto-config"> 참고 블로그 </a>
 ***
+
+### 11월 24일
+- Exception Controller Advice 클래스 가구현
+  - @RestControllerAdvice : `@ResponseBody`를 가지고 있어 객체를 자동으로 Json 타입으로 변환해준다.
+  ![img.png](img.png)
+  - @ExceptionHandler : 예외 처리 메서드에 추가한다. 
+- Error 정보를 반환할 ErrorResponse 클래스 가구현
+  - 필요한 정보만 클라이언트에게 보여줄 수 있도록 별도의 클래스를 생성해 반환한다.
+
+***
