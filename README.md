@@ -74,3 +74,15 @@
   - 필요한 정보만 클라이언트에게 보여줄 수 있도록 별도의 클래스를 생성해 반환한다.
 
 ***
+
+### 11월 25일
+- Exception Handler class 구현
+  - @ResponseStatus : HTTP Code를 반환해준다. 
+- ErrorResponse 클래스 구현으로 핸들러 메서드와 반환 값을 구하는 메서드를 분리하였다.
+- 비즈니스 계층 예외 처리 구현
+  - 사용자 정의 예외 : enum 타입의 ExceptionCode를 작성해 구체적인 표현을 할 수 있도록 한다.
+  - BusinessLogicException 구현 -> RuntimeException을 상속 받고 있다.
+
+추후 발생하는 Exception에 대한 처리를 바로바로 진행할 것!! 
+
+***

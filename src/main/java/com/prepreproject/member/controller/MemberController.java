@@ -82,7 +82,10 @@ public class MemberController {
     //회원 삭제
     // request body : x, request path : memberId, response body : x
     @DeleteMapping("/{member-id}")
-    public void deleteMember(@PathVariable("member-id") @Positive long memberId) {
+    public ResponseEntity deleteMember(@PathVariable("member-id") @Positive long memberId) {
 
+        memberService.deleteMember(memberId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
