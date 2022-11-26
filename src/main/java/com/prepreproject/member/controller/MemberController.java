@@ -6,6 +6,8 @@ import com.prepreproject.member.dto.MemberDto;
 import com.prepreproject.member.entity.Member;
 import com.prepreproject.member.mapper.MemberMapper;
 import com.prepreproject.member.service.MemberService;
+import com.prepreproject.response.PageInfo;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -72,12 +74,18 @@ public class MemberController {
     // request body : x, request path :x , response body : pagenation
     // request parameter -> int page, int size
     @GetMapping
-    public ResponseEntity getMembers() {
+    public ResponseEntity getMembers(@Positive @RequestParam int page,
+                                     @Positive @RequestParam int size) {
+        // 페이지 인포
+        Page<Member> membersPage = memberService.findMembers(page, size);
+        PageInfo pageInfo =
+                new PageInfo(page, size, (int)membersPage.getTotalElements(), membersPage.getTotalPages());
 
-        List<Member> members = memberService.findMembers();
+        // 멤버정보
+        List<Member> members = membersPage.getContent();
         List<MemberDto.Response> responses = mapper.membersToMemberResponseDtos(members);
 
-        return new ResponseEntity<>(new MultiResponseDto<>(responses), HttpStatus.OK);
+        return new ResponseEntity<>(new MultiResponseDto<>(responses, pageInfo), HttpStatus.OK);
     }
     //회원 삭제
     // request body : x, request path : memberId, response body : x

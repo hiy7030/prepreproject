@@ -6,6 +6,8 @@ import com.prepreproject.order.dto.OrderDto;
 import com.prepreproject.order.entity.Order;
 import com.prepreproject.order.mapper.OrderMapper;
 import com.prepreproject.order.service.OrderService;
+import com.prepreproject.response.PageInfo;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -62,12 +64,17 @@ public class OrderController {
     }
     // 주문 목록 조회
     @GetMapping
-    public ResponseEntity getOrders() {
+    public ResponseEntity getOrders(@Positive @RequestParam int page,
+                                    @Positive @RequestParam int size) {
+        // 페이지 인포
+        Page<Order> pageOrder =orderService.findOrders(page, size);
+        PageInfo pageInfo = new PageInfo(page, size, (int) pageOrder.getTotalElements(), pageOrder.getTotalPages());
 
-        List<Order> orders = orderService.findOrders();
+        //멤버정보
+        List<Order> orders = pageOrder.getContent();
         List<OrderDto.Response> responses = mapper.ordersToOrderResponseDtos(orders);
 
-        return new ResponseEntity<>(new MultiResponseDto<>(responses), HttpStatus.OK);
+        return new ResponseEntity<>(new MultiResponseDto<>(responses, pageInfo), HttpStatus.OK);
     }
     // 주문 취소
     @DeleteMapping("/{order-id}")

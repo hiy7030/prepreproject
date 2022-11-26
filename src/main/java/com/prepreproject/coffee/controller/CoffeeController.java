@@ -6,6 +6,8 @@ import com.prepreproject.coffee.mapper.CoffeeMapper;
 import com.prepreproject.coffee.service.CoffeeService;
 import com.prepreproject.dto.MultiResponseDto;
 import com.prepreproject.dto.SingleResponseDto;
+import com.prepreproject.response.PageInfo;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -62,12 +64,17 @@ public class CoffeeController {
     }
     // 커피 목록 조회
     @GetMapping
-    public ResponseEntity getCoffees() {
+    public ResponseEntity getCoffees(@Positive @RequestParam int page,
+                                     @Positive @RequestParam int size) {
 
-        List<Coffee> coffees = coffeeService.findCoffees();
+        // 페이지 인포
+        Page<Coffee> coffeePage = coffeeService.findCoffees(page, size);
+        PageInfo pageInfo = new PageInfo(page, size, (int) coffeePage.getTotalElements(), coffeePage.getTotalPages());
+        // 커피 정보
+        List<Coffee> coffees = coffeePage.getContent();
         List<CoffeeDto.Response> responses = mapper.coffeesToCoffeeResponseDtos(coffees);
 
-        return new ResponseEntity<>(new MultiResponseDto<>(responses), HttpStatus.OK);
+        return new ResponseEntity<>(new MultiResponseDto<>(responses, pageInfo), HttpStatus.OK);
     }
     // 커피 삭제
     @DeleteMapping("/{coffee-id}")

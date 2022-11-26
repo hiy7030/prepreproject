@@ -86,3 +86,16 @@
 추후 발생하는 Exception에 대한 처리를 바로바로 진행할 것!! 
 
 ***
+
+### 11월 26일 
+- 목록 조회를 위해 `PageResponse` 클래스 가구현
+  - 데이터 액세스 계층 구현 후 로직 작성 예정
+- Repository 인터페이스 가구현(`JpaRepository` 상속)
+- 페이지네이션 로직 구현
+  - `PageInfo` 클래스로 response 객체 생성
+  - Repository에서 목록을 찾기 위해 `Pageable` 생성
+  - `Pageable`은 해당 엔티티클래스의 Id 순으로 정렬하도록 Sort 설정 입력
+  - repository로부터 반환된 Page<Object>로 PageInfo와 Object 목록 생성
+- 데이터 액세스 계층 연동을 하지 제대로 하지 않아 애플리케이션이 정상 실행이 안되는 것으로 판단!!
+***
+  

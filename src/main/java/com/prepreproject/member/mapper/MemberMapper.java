@@ -3,6 +3,7 @@ package com.prepreproject.member.mapper;
 import com.prepreproject.member.dto.MemberDto;
 import com.prepreproject.member.entity.Member;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 

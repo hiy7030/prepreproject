@@ -1,12 +1,24 @@
 package com.prepreproject.order.service;
 
 import com.prepreproject.order.entity.Order;
+import com.prepreproject.order.repositoty.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class OrderService {
+
+    private final OrderRepository orderRepository;
+
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     // 주문 생성
     public Order createOrder(Order order) {
         order.setOrderId(1L);
@@ -25,15 +37,10 @@ public class OrderService {
         return order;
     }
     // 주문 목록 조회
-    public List<Order> findOrders() {
+    public Page<Order> findOrders(int page, int size) {
 
-        Order order1 = new Order(Order.OrderStatus.ORDER_REQUEST);
-        order1.setOrderId(1L);
-
-        Order order2 = new Order(Order.OrderStatus.ORDER_REQUEST);
-        order2.setOrderId(2L);
-
-        return List.of(order1, order2);
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("orderId").descending());
+        return orderRepository.findAll(pageable);
     }
     // 주문 삭제
     public void deleteOrder(long orderId) {

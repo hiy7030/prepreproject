@@ -3,12 +3,23 @@ package com.prepreproject.member.service;
 import com.prepreproject.exception.BusinessLogicException;
 import com.prepreproject.exception.ExceptionCode;
 import com.prepreproject.member.entity.Member;
+import com.prepreproject.member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     // 회원 생성 -> member 객체를 받아야 -> 추후에 DB에 저장하는거니까!
     public Member createMember(Member member) {
@@ -30,14 +41,13 @@ public class MemberService {
 //        return member;
     }
     // 회원 목록 조회
-    public List<Member> findMembers() {
+    public Page<Member> findMembers(int page, int size) {
 
-        Member member1 = new Member("hgd@gmail.com", "홍길동", "010-1111-1111");
-        member1.setMemberId(1L);
-        Member member2 = new Member("aaa@gmail.com", "김길동", "010-2222-2222");
-        member2.setMemberId(2L);
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("memberId").descending()); // pageable은 0부터 시작하므로 -1 해줌
+        Page<Member> memberPage = memberRepository.findAll(pageable);
 
-        return List.of(member1, member2);
+
+        return memberPage;
     }
     // 회원 삭제
     public void deleteMember(long memberId) {
