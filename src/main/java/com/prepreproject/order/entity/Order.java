@@ -1,14 +1,23 @@
 package com.prepreproject.order.entity;
 
+import com.prepreproject.audit.Audit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class Order {
+@Entity
+@Table(name = "ORDERS")
+public class Order extends Audit {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+    @Column(length = 20, nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.ORDER_REQUEST;
 
     public Order(OrderStatus orderStatus) {

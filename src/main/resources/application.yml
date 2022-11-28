@@ -7,7 +7,7 @@ spring:
       url: jdbc:h2:mem:test
     jpa:
       hibernate:
-        ddl-auto: create  # (1) 스키마 자동 생성
+        ddl-auto: create  # (1) 스키마 자동 생성 -> 매 실행마다 자동 생성되며 그 전에 데이터는 다 삭제됨 주의할 것!
       show-sql: true      # (2) SQL 쿼리 출력
   output:
     ansi:
