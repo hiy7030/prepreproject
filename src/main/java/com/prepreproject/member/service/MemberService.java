@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -23,9 +24,7 @@ public class MemberService {
 
     // 회원 생성 -> member 객체를 받아야 -> 추후에 DB에 저장하는거니까!
     public Member createMember(Member member) {
-        member.setMemberId(1L);
-
-        return member;
+        // 회원 email로 존재 여부 확인 후 리포지토리에 저장
     }
     // 회원 정보 수정
     public Member updateMember(Member member) {
@@ -54,5 +53,22 @@ public class MemberService {
         //예외처리 구현을 위한 로직 삭제요망
         String logResult = null;
         System.out.println(logResult.toUpperCase());
+    }
+
+    // 검증 메서드
+    // 1. 회원 존재 여부 확인 후 가입 -> 이메일로 조회 -> 예외 발생
+    private void verifyExistsEmail(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(optionalMember.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        }
+    }
+    // 2. 회원 존재 여부 확인 -> 멤버 아이디로 조회 -> 찾은 회원 반환
+    public Member findVerifiedMember(long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member findMember = optionalMember.orElseThrow(
+                () -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        return findMember;
     }
 }

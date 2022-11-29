@@ -1,11 +1,14 @@
 package com.prepreproject.order.entity;
 
 import com.prepreproject.audit.Audit;
+import com.prepreproject.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,4 +44,26 @@ public class Order extends Audit {
             this.status = status;
         }
     }
+
+    // 엔티티 연관관계 매핑
+    // 1. member(1) -> 객체 하나
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID") // 테이블에서의 외래키 컬럼명
+    private Member member;
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    // OrderCoffee와 매핑
+    @OneToMany(mappedBy = "order")
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+    public void setOrderCoffee(OrderCoffee orderCoffee) {
+        orderCoffees.add(orderCoffee);
+        if(orderCoffee.getOrder() != this) {
+            orderCoffee.setOrder(this);
+        }
+    }
+
 }

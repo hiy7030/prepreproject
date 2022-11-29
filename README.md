@@ -132,3 +132,21 @@
   6. 상속 받을 클래스에 `extends`한다.
 
 ***
+
+### 11월 29일 
+- 엔티티 관계 매핑
+  - Member - Order : 1:N 매핑
+  - Member - Stamp : 1:1 매핑
+  - Order - Coffee : N:N 매핑 -> 조인 테이블 필요!
+- @ManyToOne, @OneToMany, @OneToOne : 연관 관계 매핑을 명시하는 애너테이션으로 해당 엔티티 클래스 기준으로 작성
+  - @ManyToOne : 내가 N, 연관 관계의 클래스가 1
+  - @OneToMany : 내가 1, 연관 관계의 클래스가 N
+- @JoinColumn : 외래키에 해당하는 컬럼명(ex. MEMBER_ID)을 적어주며 해당 필드가, 외래키임을 Spring boot에 알려준다.
+  - ⭐외래키에 해당하는 필드에만 추가하는 것!
+  - ⭐@OneToMany의 `mappedBy` 애트리뷰트
+    - 나의 외래키를 가지고 있는, 외래키로 지정된 필드 명을 적어준다.
+    - ex. Order 클래스에서 `member` 필드가 외래키로 지정되었다면 Member 클래스에 매핑된 @OneToMany 애너테이션에 `mappedBy`의 값은 `member`가 된다.
+
+- MemberService 클래스에 검증 메서드 구현
+  - verifyExistsEmail : Email정보로 DB에 저장된 회원 정보를 조회하는 메서드, 존재하면 예외가 발생한다.
+  - findVerifiedMember : memberId로 DB에 저장된 회원 정보를 조회하는 메서드, 존재하지 않으면 예외가 발생하고 존재하면 해당 회원 정보를 반환한다.

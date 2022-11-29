@@ -1,11 +1,14 @@
 package com.prepreproject.coffee.entity;
 
 import com.prepreproject.audit.Audit;
+import com.prepreproject.order.entity.OrderCoffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,4 +49,16 @@ public class Coffee extends Audit {
             this.status = status;
         }
     }
+
+    // OrderCoffee와 매핑
+    @OneToMany(mappedBy = "coffee")
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+    public void setOrderCoffee(OrderCoffee orderCoffee){
+        orderCoffees.add(orderCoffee);
+        if(orderCoffee.getCoffee() != this) {
+            orderCoffee.setCoffee(this);
+        }
+    }
+
 }
