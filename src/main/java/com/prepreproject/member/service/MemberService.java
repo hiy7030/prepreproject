@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,19 +26,31 @@ public class MemberService {
     // 회원 생성 -> member 객체를 받아야 -> 추후에 DB에 저장하는거니까!
     public Member createMember(Member member) {
         // 회원 email로 존재 여부 확인 후 리포지토리에 저장
+        verifyExistsEmail(member.getEmail());
+
+        return memberRepository.save(member);
     }
     // 회원 정보 수정
     public Member updateMember(Member member) {
+        // 회원을 찾아서 입력 받은 값으로 회원 정보 수정
+        Member findMember = findVerifiedMember(member.getMemberId());
+        // 변경 가능한 필드 -> 이름, 폰번호, 회원 상태
+        Optional.ofNullable(member.getName())
+                .ifPresent(name -> findMember.setName(name));
 
-        return member;
+        Optional.ofNullable(member.getPhone())
+                .ifPresent(phone -> findMember.setPhone(phone));
+
+        Optional.ofNullable(member.getMemberStatus())
+                .ifPresent(status -> findMember.setMemberStatus(status));
+
+        return  memberRepository.save(findMember);
     }
     // 회원 조회
     public Member findMember(long memberId) {
 
-        Member member = new Member("hgd@gmail.com", "홍길동", "010-1111-1111");
-        member.setMemberId(memberId);
-        throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
-//        return member;
+        return findVerifiedMember(memberId);
+
     }
     // 회원 목록 조회
     public Page<Member> findMembers(int page, int size) {
@@ -50,14 +63,14 @@ public class MemberService {
     }
     // 회원 삭제
     public void deleteMember(long memberId) {
-        //예외처리 구현을 위한 로직 삭제요망
-        String logResult = null;
-        System.out.println(logResult.toUpperCase());
+        // 회원 찾아서 삭제
+        Member findMember = findVerifiedMember(memberId);
+        memberRepository.delete(findMember);
     }
 
     // 검증 메서드
     // 1. 회원 존재 여부 확인 후 가입 -> 이메일로 조회 -> 예외 발생
-    private void verifyExistsEmail(String email) {
+    private void verifyExistsEmail(String email) { // 이메일로 조회하는 이유 : 고유값이기 때문에
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         if(optionalMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);

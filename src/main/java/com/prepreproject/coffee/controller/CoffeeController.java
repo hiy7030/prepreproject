@@ -45,10 +45,12 @@ public class CoffeeController {
     public ResponseEntity  patchCoffee(@PathVariable("coffee-id") @Positive long coffeeId,
                                        @Valid @RequestBody CoffeeDto.Patch coffeePatchDto) {
 
-        Coffee coffee = coffeeService.updateCoffee(mapper.coffeePatchDtoToCoffee(coffeePatchDto));
+        Coffee coffee = mapper.coffeePatchDtoToCoffee(coffeePatchDto);
         coffee.setCoffeeId(coffeeId);
 
-        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(coffee);
+        Coffee updateCoffee = coffeeService.updateCoffee(coffee);
+
+        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(updateCoffee);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -78,7 +80,10 @@ public class CoffeeController {
     }
     // 커피 삭제
     @DeleteMapping("/{coffee-id}")
-    public void deleteCoffee(@PathVariable("coffee-id") @Positive long coffeeId) {
+    public ResponseEntity deleteCoffee(@PathVariable("coffee-id") @Positive long coffeeId) {
 
+        coffeeService.deleteCoffee(coffeeId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

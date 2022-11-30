@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 
 public class CoffeeDto {
     @Getter
@@ -57,5 +58,6 @@ public class CoffeeDto {
         private int price;
         private String coffeeCode;
         private Coffee.CoffeeStatus coffeeStatus;
+        private LocalDateTime createAt;
     }
 }

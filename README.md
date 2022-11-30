@@ -148,5 +148,26 @@
     - ex. Order 클래스에서 `member` 필드가 외래키로 지정되었다면 Member 클래스에 매핑된 @OneToMany 애너테이션에 `mappedBy`의 값은 `member`가 된다.
 
 - MemberService 클래스에 검증 메서드 구현
-  - verifyExistsEmail : Email정보로 DB에 저장된 회원 정보를 조회하는 메서드, 존재하면 예외가 발생한다.
+  - verifyExistsEmail : Email 정보로 DB에 저장된 회원 정보를 조회하는 메서드, 존재하면 예외가 발생한다.
   - findVerifiedMember : memberId로 DB에 저장된 회원 정보를 조회하는 메서드, 존재하지 않으면 예외가 발생하고 존재하면 해당 회원 정보를 반환한다.
+
+***
+
+### 11월 30일 
+- Service - Repository 연동
+- MemberRepository `Optional<Member>`를 반환하는 `findByEmail` 메서드 생성
+  - ⭐Email로 조회하는 이유 : Email은 고유값으로 지정되어 있기 때문에!!
+- `updateMember` 메서드 내에서 **검증 로직** 구현
+  - Optional를 이용하여 파라미터로 받은 Member 객체를 검증 후 repository에서 memberId로 조회한 회원 정보에 업데이트 한다.
+  - `ofNullable` : null값을 허용하며, 값을 반환한다.
+  - `ifPresent` : `ofNullable`에서 반환한 값이 **null**이 아니라면 로직을 실행한다.
+- CoffeeService 클래스에 검증 메서드 구현
+  - `isPresent()` : boolean 반환 타입을 가진다.
+  - `orElseThrow()` : 값이 존재하면 값을 반환하고, 존재하지 않으면 예외를 발생시킨다.
+  - CoffeeCode 필드를 고유값으로 변경하였고, 대문자로 변환하여 저장해 알파벳 대,소문자로 인한 혼선이 발생하지 않도록 한다.
+- Order 비즈니스, 데이터 액세스 추가 구현 필요
+  - OrderCoffee 반환, Coffee 정보 반환
+  - OrderMapper 추가 구현, OrderCoffeeDto 추가 구현 필요
+- Member와 Stamp 연관 관계 매핑을 통한 로직 구현 필요
+
+***

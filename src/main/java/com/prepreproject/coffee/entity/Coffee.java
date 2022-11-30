@@ -24,7 +24,7 @@ public class Coffee extends Audit {
     private String engName;
     @Column(nullable = false)
     private int price;
-    @Column(nullable = false, length = 3)
+    @Column(nullable = false, length = 3, unique = true)
     private String coffeeCode;
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
