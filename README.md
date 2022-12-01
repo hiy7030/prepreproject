@@ -171,3 +171,10 @@
 - Member와 Stamp 연관 관계 매핑을 통한 로직 구현 필요
 
 ***
+
+### 12월 1일 
+- OrderService 구현
+  - `createOrder` : 주문을 한 회원의 정보를 조회하고 주문을 처리하는 로직 구현
+  - `updateOrder` : 변경 가능한 것은 주문의 상태
+  - `cancelOrder` : 주문 취소가 가능한 상태인지 파악 후 DB에 저장된 주문 정보 삭제
+  - `updateStamp` : 주문의 수량 만큼 스탬프 개수를 변경하는 로직 구현 

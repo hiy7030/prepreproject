@@ -34,13 +34,13 @@ public class Order extends Audit {
         ORDER_CANCEL(4, "주문 취소");
 
         @Getter
-        private int stepNumber;
+        private int step;
 
         @Getter
         private String status;
 
-        OrderStatus(int stepNumber, String status) {
-            this.stepNumber = stepNumber;
+        OrderStatus(int step, String status) {
+            this.step = step;
             this.status = status;
         }
     }
