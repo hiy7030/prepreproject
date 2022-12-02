@@ -20,7 +20,7 @@ public class Order extends Audit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     @Column(length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.ORDER_REQUEST;
 
     public Order(OrderStatus orderStatus) {
@@ -56,7 +56,7 @@ public class Order extends Audit {
     }
 
     // OrderCoffee와 매핑
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderCoffee> orderCoffees = new ArrayList<>();
 
     public void setOrderCoffee(OrderCoffee orderCoffee) {

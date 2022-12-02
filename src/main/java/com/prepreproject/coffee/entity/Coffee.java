@@ -27,8 +27,12 @@ public class Coffee extends Audit {
     @Column(nullable = false, length = 3, unique = true)
     private String coffeeCode;
     @Column(nullable = false, length = 20)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private CoffeeStatus coffeeStatus = CoffeeStatus.COFFEE_FOR_SALE;
+
+    public Coffee(Long coffeeId) {
+        this.coffeeId = coffeeId;
+    }
 
     public Coffee(String korName, String engName, int price, String coffeeCode, CoffeeStatus coffeeStatus) {
         this.korName = korName;

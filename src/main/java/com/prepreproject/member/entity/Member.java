@@ -27,7 +27,7 @@ public class Member extends Audit {
     private String phone;
 
     @Column(length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
 
     public Member(String email, String name, String phone) {
@@ -62,7 +62,7 @@ public class Member extends Audit {
     }
 
     // 2. stamp(1)
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Stamp stamp;
 
     public void setStamp(Stamp stamp) {

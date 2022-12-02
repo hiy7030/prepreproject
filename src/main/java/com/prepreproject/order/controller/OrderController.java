@@ -34,8 +34,9 @@ public class OrderController {
     // 주문 등록
     @PostMapping
     public ResponseEntity postOrder(@Valid @RequestBody OrderDto.Post orderPostDto) {
-
-        Order order = orderService.createOrder(mapper.orderPostDtoToOrder(orderPostDto));
+        // orderPostDto -> memberId, OrderCoffees[]
+        Order testOrder = mapper.orderPostDtoToOrder(orderPostDto);
+        Order order = orderService.createOrder(testOrder);
         OrderDto.Response response = mapper.orderToOrderResponseDto(order);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);

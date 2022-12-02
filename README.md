@@ -178,3 +178,11 @@
   - `updateOrder` : 변경 가능한 것은 주문의 상태
   - `cancelOrder` : 주문 취소가 가능한 상태인지 파악 후 DB에 저장된 주문 정보 삭제
   - `updateStamp` : 주문의 수량 만큼 스탬프 개수를 변경하는 로직 구현 
+
+***
+
+### 12월 2일
+
+- `postOrder`를 테스팅하는 과정에서 `Internal Server Error`이 발생했다. 디버깅으로 에러가 발생하는 부분을 찾으려고 했으나 `mapper`와 `Service` 메서드로 넘어가는 과정에서 발생하는 것 같다.
+- 디버깅으로 `InvocationTargetException` 예외가 발생한 것을 확인했으며, `Cannot find local variable'member'`가 발생하였다. 
+- 해결 방법은 아직 찾기 못했다..🥺 첫 실습 과제를 진행했을 때도 같은 에러가 발생했기 때문에 이번에는 꼭 스스로 해결해 볼 생각이다. 

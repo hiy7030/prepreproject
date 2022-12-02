@@ -26,5 +26,8 @@ public class Stamp extends Audit {
 
     public void setMember(Member member) {
         this.member = member;
+        if(member.getStamp() != this) {
+            member.setStamp(this);
+        }
     }
 }
