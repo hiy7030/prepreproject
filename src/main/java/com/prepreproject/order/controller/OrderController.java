@@ -2,11 +2,16 @@ package com.prepreproject.order.controller;
 
 import com.prepreproject.dto.MultiResponseDto;
 import com.prepreproject.dto.SingleResponseDto;
-import com.prepreproject.order.dto.OrderDto;
+import com.prepreproject.member.entity.Member;
+import com.prepreproject.member.service.MemberService;
+import com.prepreproject.order.dto.OrderPatchDto;
+import com.prepreproject.order.dto.OrderPostDto;
+import com.prepreproject.order.dto.OrderResponseDto;
 import com.prepreproject.order.entity.Order;
 import com.prepreproject.order.mapper.OrderMapper;
 import com.prepreproject.order.service.OrderService;
 import com.prepreproject.response.PageInfo;
+import com.prepreproject.stamp.Stamp;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,31 +30,39 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderMapper mapper;
 
+    private final MemberService memberService;
+
     public OrderController(OrderService orderService,
-                           OrderMapper mapper) {
+                           OrderMapper mapper,
+                           MemberService memberService) {
         this.orderService = orderService;
         this.mapper = mapper;
+        this.memberService = memberService;
     }
 
     // 주문 등록
     @PostMapping
-    public ResponseEntity postOrder(@Valid @RequestBody OrderDto.Post orderPostDto) {
+    public ResponseEntity postOrder(@Valid @RequestBody OrderPostDto orderPostDto) {
         // orderPostDto -> memberId, OrderCoffees[]
-        Order testOrder = mapper.orderPostDtoToOrder(orderPostDto);
-        Order order = orderService.createOrder(testOrder);
-        OrderDto.Response response = mapper.orderToOrderResponseDto(order);
+        Order order = orderService.createOrder(mapper.orderPostDtoToOrder(orderPostDto));
+
+
+        OrderResponseDto response = mapper.orderToOrderResponseDto(order);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
+
+
+
     // 주문 수정
     @PatchMapping("/{order-id}")
-    public ResponseEntity  patchOrder(@PathVariable("order-id") @Positive long orderId,
-                                      @Valid @RequestBody OrderDto.Patch orderPatchDto) {
+    public ResponseEntity patchOrder(@PathVariable("order-id") @Positive long orderId,
+                                      @Valid @RequestBody OrderPatchDto orderPatchDto) {
 
         Order order = orderService.updateOrder(mapper.orderPatchDtoToOrder(orderPatchDto));
         order.setOrderId(orderId);
 
-        OrderDto.Response response = mapper.orderToOrderResponseDto(order);
+        OrderResponseDto response = mapper.orderToOrderResponseDto(order);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -59,7 +72,7 @@ public class OrderController {
 
         Order order = orderService.findOrder(orderId);
 
-        OrderDto.Response response = mapper.orderToOrderResponseDto(order);
+        OrderResponseDto response = mapper.orderToOrderResponseDto(order);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -73,13 +86,13 @@ public class OrderController {
 
         //멤버정보
         List<Order> orders = pageOrder.getContent();
-        List<OrderDto.Response> responses = mapper.ordersToOrderResponseDtos(orders);
+        List<OrderResponseDto> responses = mapper.ordersToOrderResponseDtos(orders);
 
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pageInfo), HttpStatus.OK);
     }
     // 주문 취소
     @DeleteMapping("/{order-id}")
     public void deleteOrder(@PathVariable("order-id") @Positive long orderId) {
-
+        orderService.cancelOrder(orderId);
     }
 }

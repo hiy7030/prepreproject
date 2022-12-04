@@ -62,7 +62,7 @@ public class Member extends Audit {
     }
 
     // 2. stamp(1)
-    @OneToOne(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
     private Stamp stamp;
 
     public void setStamp(Stamp stamp) {

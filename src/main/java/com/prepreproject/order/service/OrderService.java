@@ -36,9 +36,7 @@ public class OrderService {
 
     // 주문 생성
     public Order createOrder(Order order) {
-        // 회원 존재 검증 후 저장
-        memberService.findVerifiedMember(order.getMember().getMemberId());
-        //orderCoffee 리스트에 Coffee가 존재하는 지 검증
+
         verifyExistOrder(order);
         // orderCoffee의 각 quantity 합계를 구해 StampCount 하고 member.setStamp;
         updateStamp(order);
@@ -96,6 +94,9 @@ public class OrderService {
 
     //2. orderCoffee 리스트에 Coffee가 존재하는 지 검증
     private void verifyExistOrder(Order order) {
+        // 회원 존재 검증 후 저장
+        memberService.findVerifiedMember(order.getMember().getMemberId());
+
         List<OrderCoffee> orderCoffees = order.getOrderCoffees();
         orderCoffees.stream().forEach(orderCoffee ->
                 coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId()));
@@ -104,16 +105,22 @@ public class OrderService {
     // update stampCount
     public void updateStamp(Order order) {
         // 오더에서 멤버 객체 가져오기
-        Member member = order.getMember();
-        // 멤버 객체에서 스탬프 객체 가져오기
-        Stamp stamp = member.getStamp();
-        int oldStamp = stamp.getStampCount();
+        Member member = memberService.findMember(order.getMember().getMemberId());
+        // 멤버 객체에서 스탬프 객체 가져오기 스탬프가 null 이면 새 stamp 객체 생성
+        if(member.getStamp() == null) {
+            Stamp stamp = new Stamp();
+        } else {
+            Stamp stamp = member.getStamp();
+        }
+        Stamp stamp = new Stamp();
         // order에서 OrderCoffee 가져와서 각 quantity 개수 합치기
         int newStamp = order.getOrderCoffees()
-                .stream().map(orderCoffee -> orderCoffee.getQuantity())
-                .mapToInt(quantity -> quantity).sum();
+                .stream()
+                .map(orderCoffee -> orderCoffee.getQuantity())
+                .mapToInt(quantity -> quantity)
+                .sum();
         // 현재 스탬프 갯수와 합쳐 멤버에 set하고 -> 리포지토리에 저장
-        stamp.setStampCount(oldStamp + newStamp);
+        stamp.setStampCount(stamp.getStampCount() + newStamp);
         member.setStamp(stamp);
         memberService.updateMember(member);
     }

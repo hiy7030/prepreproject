@@ -51,12 +51,12 @@ public class Order extends Audit {
     @JoinColumn(name = "MEMBER_ID") // 테이블에서의 외래키 컬럼명
     private Member member;
 
-    public void setMember(Member member) {
+    public void addMember(Member member) {
         this.member = member;
     }
 
     // OrderCoffee와 매핑
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderCoffee> orderCoffees = new ArrayList<>();
 
     public void setOrderCoffee(OrderCoffee orderCoffee) {

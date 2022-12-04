@@ -2,8 +2,7 @@ package com.prepreproject.order.mapper;
 
 import com.prepreproject.coffee.entity.Coffee;
 import com.prepreproject.member.entity.Member;
-import com.prepreproject.order.dto.OrderCoffeeDto;
-import com.prepreproject.order.dto.OrderDto;
+import com.prepreproject.order.dto.*;
 import com.prepreproject.order.entity.Order;
 import com.prepreproject.order.entity.OrderCoffee;
 import org.mapstruct.Mapper;
@@ -13,40 +12,39 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-    default Order orderPostDtoToOrder(OrderDto.Post orderPostDto) {
+    default Order orderPostDtoToOrder(OrderPostDto orderPostDto) {
         Order order = new Order();
 
         Member member = new Member();
         member.setMemberId(orderPostDto.getMemberId());
         // orderCoffees
-        List<OrderCoffeeDto.Post> orderCoffeePostDto = orderPostDto.getOrderCoffees();
         //  List<OrderCoffeeDto.Post> -> List<OrderCoffee>
         // OrderCoffeeDto.Post -> coffeeId, quantity를 가짐
 
-        List<OrderCoffee> orderCoffees = orderCoffeePostDto
+        List<OrderCoffee> orderCoffees = orderPostDto.getOrderCoffees()
                 .stream().map(orderCoffeePost -> {
                     OrderCoffee orderCoffee = new OrderCoffee();
                     Coffee coffee = new Coffee();
                     coffee.setCoffeeId(orderCoffeePost.getCoffeeId());
-                    orderCoffee.setCoffee(coffee);
-                    orderCoffee.setOrder(order);
-                    orderCoffee.setQuantity(orderCoffee.getQuantity());
+                    orderCoffee.addCoffee(coffee);
+                    orderCoffee.addOrder(order);
+                    orderCoffee.setQuantity(orderCoffeePost.getQuantity());
                     return orderCoffee;
                 } ).collect(Collectors.toList());
 
-        order.setMember(member);
+        order.addMember(member);
         order.setOrderCoffees(orderCoffees);
 
         return order;
     }
-    Order orderPatchDtoToOrder(OrderDto.Patch orderPatchDto);
-    default OrderDto.Response orderToOrderResponseDto(Order order) {
+    Order orderPatchDtoToOrder(OrderPatchDto orderPatchDto);
+    default OrderResponseDto orderToOrderResponseDto(Order order) {
 
         // List<orderCoffee> -> List<OrderCoffeeDto.Response>
         List<OrderCoffee> orderCoffees = order.getOrderCoffees();
 
         // order -> orderDto
-        OrderDto.Response orderResponseDto = new OrderDto.Response();
+        OrderResponseDto orderResponseDto = new OrderResponseDto();
         orderResponseDto.setOrderId(order.getOrderId());
         orderResponseDto.setMember(order.getMember());
         orderResponseDto.setOrderStatus(order.getOrderStatus());
@@ -55,12 +53,12 @@ public interface OrderMapper {
 
         return orderResponseDto;
     }
-    List<OrderDto.Response> ordersToOrderResponseDtos (List<Order> orders);
+    List<OrderResponseDto> ordersToOrderResponseDtos (List<Order> orders);
 
-    default List<OrderCoffeeDto.Response> orderCoffeeToOrderCoffeeResponseDtos(List<OrderCoffee> orderCoffees) {
+    default List<OrderCoffeeResponseDto> orderCoffeeToOrderCoffeeResponseDtos(List<OrderCoffee> orderCoffees) {
 
         return orderCoffees.stream()
-                .map(orderCoffee -> OrderCoffeeDto.Response.builder()
+                .map(orderCoffee -> OrderCoffeeResponseDto.builder()
                             .coffeeId(orderCoffee.getCoffee().getCoffeeId())
                             .quantity(orderCoffee.getQuantity())
                             .price(orderCoffee.getCoffee().getPrice())
