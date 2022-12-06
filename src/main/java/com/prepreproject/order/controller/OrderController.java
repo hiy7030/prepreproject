@@ -17,9 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,6 +33,7 @@ public class OrderController {
     private final OrderMapper mapper;
 
     private final MemberService memberService;
+    private final static String ORDER_DEFAULT_URL = "/v1/orders";
 
     public OrderController(OrderService orderService,
                            OrderMapper mapper,
@@ -45,11 +48,15 @@ public class OrderController {
     public ResponseEntity postOrder(@Valid @RequestBody OrderPostDto orderPostDto) {
         // orderPostDto -> memberId, OrderCoffees[]
         Order order = orderService.createOrder(mapper.orderPostDtoToOrder(orderPostDto));
+        // response header에 해당 orderId가 담긴 URI 넘겨주기
+
+        URI location = UriComponentsBuilder.newInstance()
+                .path(ORDER_DEFAULT_URL + "/{order-id}")
+                .buildAndExpand(order.getOrderId())
+                .toUri();
 
 
-        OrderResponseDto response = mapper.orderToOrderResponseDto(order);
-
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
 
 

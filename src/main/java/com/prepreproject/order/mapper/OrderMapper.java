@@ -48,7 +48,7 @@ public interface OrderMapper {
         orderResponseDto.setOrderId(order.getOrderId());
         orderResponseDto.setMember(order.getMember());
         orderResponseDto.setOrderStatus(order.getOrderStatus());
-        orderResponseDto.setCreatedAt(order.getCreateAt());
+        orderResponseDto.setCreateAt(order.getCreateAt());
         orderResponseDto.setOrderCoffees(orderCoffeeToOrderCoffeeResponseDtos(orderCoffees));
 
         return orderResponseDto;

@@ -1,8 +1,10 @@
 package com.prepreproject.member.dto;
 
 import com.prepreproject.member.entity.Member;
+import com.prepreproject.stamp.Stamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
@@ -34,7 +36,7 @@ public class MemberDto {
         private long memberId;
 
         @NotBlank
-        @Email
+        @Email(message = "정확한 이메일 주소가 아닙니다.")
         private String email;
 
         @NotBlank
@@ -50,6 +52,7 @@ public class MemberDto {
     @Getter
     @Setter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class Response { // 유효성 검증에서 제외! 당연함 서버에서 보내주는 정보임..
 
         private long memberId;
@@ -57,7 +60,8 @@ public class MemberDto {
         private String name;
         private String phone;
         private Member.MemberStatus memberStatus;
-        private LocalDateTime createdAt;
+        private int stampCount;
+        private LocalDateTime createAt;
 
     }
 }

@@ -15,11 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -35,6 +37,7 @@ public class OrderService {
     }
 
     // 주문 생성
+    @Transactional
     public Order createOrder(Order order) {
 
         verifyExistOrder(order);
@@ -77,7 +80,7 @@ public class OrderService {
         // 주문 상태 변경
         findOrder.setOrderStatus(Order.OrderStatus.ORDER_CANCEL);
 
-        orderRepository.delete(findOrder);
+        orderRepository.save(findOrder);
     }
 
     // 검증 메서드
@@ -107,12 +110,12 @@ public class OrderService {
         // 오더에서 멤버 객체 가져오기
         Member member = memberService.findMember(order.getMember().getMemberId());
         // 멤버 객체에서 스탬프 객체 가져오기 스탬프가 null 이면 새 stamp 객체 생성
-        if(member.getStamp() == null) {
-            Stamp stamp = new Stamp();
+        Stamp stamp;
+        if(member.getStamp() != null) {
+            stamp = member.getStamp();
         } else {
-            Stamp stamp = member.getStamp();
+            stamp = new Stamp();
         }
-        Stamp stamp = new Stamp();
         // order에서 OrderCoffee 가져와서 각 quantity 개수 합치기
         int newStamp = order.getOrderCoffees()
                 .stream()

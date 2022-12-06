@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,6 +27,7 @@ public class MemberController {
     // 서비스 계층과의 연동 필요! Dto -> 객체로 변환, 객체 -> Dto 변환해줄 매개체 필요
     private final MemberService memberService;
     private final MemberMapper mapper;
+    private final static String MEMBER_DEFAULT_URI = "/v1/members";
 
     public MemberController(MemberService memberService,
                             MemberMapper mapper) {
@@ -39,9 +42,12 @@ public class MemberController {
 
         Member member = memberService.createMember(mapper.memberPostDtoToMember(postMemberDto));
 
-        MemberDto.Response response = mapper.memberToMemberResponseDto(member);
+        URI location = UriComponentsBuilder.newInstance()
+                .path(MEMBER_DEFAULT_URI + "/{member-id}")
+                .buildAndExpand(member.getMemberId())
+                .toUri();
 
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
     //회원 정보 수정
     // request body : patch 정보 json -> object 변환 필요, response body : object -> json 변환 필요

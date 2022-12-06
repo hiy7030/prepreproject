@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,6 +26,7 @@ public class CoffeeController {
 
     private final CoffeeService coffeeService;
     private final CoffeeMapper mapper;
+    private final static String COFFEE_DEFAULT_URI = "/v1/coffees";
 
     public CoffeeController(CoffeeService coffeeService,
                             CoffeeMapper mapper) {
@@ -36,9 +39,13 @@ public class CoffeeController {
     public ResponseEntity postCoffee(@Valid @RequestBody CoffeeDto.Post coffeePostDto) {
 
         Coffee coffee = coffeeService.createCoffee(mapper.coffeePostDtoToCoffee(coffeePostDto));
-        CoffeeDto.Response response = mapper.coffeeToCoffeeResponseDto(coffee);
+        URI location =
+                UriComponentsBuilder.newInstance()
+                        .path(COFFEE_DEFAULT_URI + "/{coffee-id}")
+                        .buildAndExpand(coffee.getCoffeeId())
+                        .toUri();
 
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
     //커피 정보 수정
     @PatchMapping("/{coffee-id}")

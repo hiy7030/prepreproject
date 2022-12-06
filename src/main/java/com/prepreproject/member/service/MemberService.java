@@ -9,12 +9,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -31,6 +34,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
     // 회원 정보 수정
+    @Transactional(propagation = Propagation.REQUIRED)
     public Member updateMember(Member member) {
         // 회원을 찾아서 입력 받은 값으로 회원 정보 수정
         Member findMember = findVerifiedMember(member.getMemberId());
