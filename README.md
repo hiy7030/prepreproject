@@ -91,7 +91,7 @@
 - 목록 조회를 위해 `PageResponse` 클래스 가구현
   - 데이터 액세스 계층 구현 후 로직 작성 예정
 - Repository 인터페이스 가구현(`JpaRepository` 상속)
-- 페이지네이션 로직 구현 
+- 페이지네이션 로직 구현 [페이지네이션 블로깅](https://velog.io/@hiy7030/Spring-PageNation-%EA%B5%AC%ED%98%84)
   - `PageInfo` 클래스로 response 객체 생성
   - Repository에서 목록을 찾기 위해 `Pageable` 생성
   - `Pageable`은 해당 엔티티클래스의 Id 순으로 정렬하도록 Sort 설정 추가
@@ -239,5 +239,19 @@
     - JavaMailSender에 대해 자세하게 알아보기
     - Gmail SMTP Server 설정 (application.yml 설정)
     - 트랜잭션 적용
+    - @EventListener
+
+***
+
+### 12월 7일 
+- 회원 가입을 하면 회원의 이메일로 메일을 전송! 메일 전송 과정에서 예외가 발생하면, 회원 가입 전의 상태로 rollback 해야 한다.
+- 이메일 전송 기능은 회원 등록 쓰레드와 비동기적으로 실행(🧐 메일 서버를 거치면서 많은 시간이 소모되므로) 
+- 이메일 전송이 비동기적으로 처리되기 때문에 DB에 등록된 회원 정보는 그대로 남아있게 된다. -> 예외 발생 시 `memberService`의 `deleteMember()` 호출
+- `MemberService - createMember()`에 `applicationEventPublisher` 생성
+- `EventHandler`클래스 구현 및 비동기적(@Async) 이벤드 핸들러(@EventListener) 구현
+- 회원 가입이라는 이벤트 발생 시, 메일 전송 및 예외 처리(회원 정보 삭제) 로직 구현 -> 실행 안됨!!!!! 에러도 안남!!! WHY!!!
+- 당연함...`@Async`는 메서드 레벨에 추가하는데 이 애너테이션을 사용하려면 `@EnableAsync`를 클래스 레벨에 추가해줘야 함
+- `EventHandler`클래스를 Component로 스프링에 등록 안함 ^^ 히히 등록했더니 Exception 발생👊 다행히도 회원 정보도 DB에 저장되어 있지 않음
+- `NullPointerException` 발생 : `MailService`에서 `JavaMailSender`가 null이라 발생했다. final과 함께 생성자 선언했더니 실행되었으나 Gmail 연동 과정에서 문제가 발생
 
 ***

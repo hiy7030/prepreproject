@@ -5,7 +5,7 @@ import com.prepreproject.mail.service.MailService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+//@RestController
 public class MailController {
 
     private final MailService mailService;

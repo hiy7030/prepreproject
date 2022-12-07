@@ -10,6 +10,7 @@ public enum ExceptionCode { // 사용자 정의 예외
     CANNOT_CANCEL_ORDER(403, "CanNot Cancel Order"),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
     MEMBER_EXISTS(409,"Member Exists"),
+    FAILED_TO_JOIN(409, "Failed To Join"),
     COFFEE_EXISTS(409, "Coffee Exists"),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error");
 

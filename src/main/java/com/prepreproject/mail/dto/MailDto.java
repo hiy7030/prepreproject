@@ -2,13 +2,14 @@ package com.prepreproject.mail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 public class MailDto {
     private String email;
-    private String title;
-    private String message;
+    private String name;
+    private String message = "회원 가입이 완료되었습니다.";
 }

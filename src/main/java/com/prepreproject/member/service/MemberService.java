@@ -1,9 +1,12 @@
 package com.prepreproject.member.service;
 
+import com.prepreproject.event.MemberEvent;
 import com.prepreproject.exception.BusinessLogicException;
 import com.prepreproject.exception.ExceptionCode;
+import com.prepreproject.mail.service.MailService;
 import com.prepreproject.member.entity.Member;
 import com.prepreproject.member.repository.MemberRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,17 +24,27 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final MailService mailService;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository,
+                         ApplicationEventPublisher applicationEventPublisher,
+                         MailService mailService) {
         this.memberRepository = memberRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.mailService = mailService;
     }
 
     // 회원 생성 -> member 객체를 받아야 -> 추후에 DB에 저장하는거니까!
     public Member createMember(Member member) {
         // 회원 email로 존재 여부 확인 후 리포지토리에 저장
         verifyExistsEmail(member.getEmail());
+        Member saveMember = memberRepository.save(member);
+        // 메일 전송 이벤트 발생! -> 이벤트 리스너가 해당 이벤트를 받아 로직을 실행! (이벤트 리스너 -> 이벤트 핸들러)
+        applicationEventPublisher.publishEvent(new MemberEvent(saveMember));
 
-        return memberRepository.save(member);
+        return saveMember;
+
     }
     // 회원 정보 수정
     @Transactional(propagation = Propagation.REQUIRED)
