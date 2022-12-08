@@ -4,6 +4,7 @@ import com.prepreproject.exception.BusinessLogicException;
 import com.prepreproject.exception.ExceptionCode;
 import com.prepreproject.mail.dto.MailDto;
 import com.prepreproject.mail.service.MailService;
+import com.prepreproject.member.entity.Member;
 import com.prepreproject.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -26,6 +27,7 @@ public class EventHandler { // 이벤트가 발생하면 실행할 로직 구현
         this.memberService = memberService;
         this.mailService = mailService;
     }
+
     @EventListener
     @Async // 비동기
     public void handleEmailSending(MemberEvent memberEvent) {
