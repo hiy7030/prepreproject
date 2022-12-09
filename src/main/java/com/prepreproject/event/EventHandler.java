@@ -39,6 +39,7 @@ public class EventHandler { // 이벤트가 발생하면 실행할 로직 구현
             MailDto mailDto = new MailDto();
             mailDto.setEmail(memberEvent.getMember().getEmail());
             mailDto.setName(memberEvent.getMember().getName());
+            mailDto.setPhone(memberEvent.getMember().getPhone());
             mailService.sendMail(mailDto);
 
         } catch (Exception e) {
@@ -47,6 +48,5 @@ public class EventHandler { // 이벤트가 발생하면 실행할 로직 구현
             memberService.deleteMember(memberEvent.getMember().getMemberId());
             throw new BusinessLogicException(ExceptionCode.FAILED_TO_JOIN);
         }
-
     }
 }

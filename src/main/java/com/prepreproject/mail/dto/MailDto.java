@@ -11,5 +11,5 @@ import lombok.Setter;
 public class MailDto {
     private String email;
     private String name;
-    private String message = "회원 가입이 완료되었습니다.";
+    private String phone;
 }

@@ -22,7 +22,7 @@ public class MailService {
         message.setTo(mailDto.getEmail());
         message.setFrom(FROM_ADDRESS);
         message.setSubject(String.format("%S 님, 회원 가입이 완료되었습니다.", mailDto.getName()));
-        message.setText(mailDto.getMessage());
+        message.setText(String.format("%s님, %s의 정보로 가입을 완료하였습니다.", mailDto.getName(), mailDto.getPhone()));
 
         mailSender.send(message);
     }

@@ -262,3 +262,31 @@
 - 정상적으로 메일이 전송되었다. 🥺👍
 - 한가지 궁금! 왜 ` applicationEventPublisher.publishEvent(new MemberEvent(saveMember));`에서 파라미터를 굳이 MemberEvent 클래스에 멤버 객체를 감싸줘야 할까?
 아 완전 알아버린거임. 개발자의 편의를 위해서였음. 바로 Member 객체를 넣어 로직을 구현해도 아무 문제가 없으나, 후에 유지보수를 원활하게 하기 위해 Event 클래스로 감싸주는 것!
+- [메일 전송 블로깅](https://velog.io/@hiy7030/Spring-mailEventListener)
+
+***
+
+### 12월 9일 
+#### Testing
+- ⭐TDD(Test Drivent Development) : 테스트 주도 개발 -> 기능 구현 전에 테스트 케이스 먼저 작성하는 방식
+- 가독성 높은 테스트 케이스를 작성하기 위한 표헌 방법 - `given-when-then`
+  - given : 테스트에 필요한 전제 조건(전달되는 입력값 등), 테스트에 **주어진** 값
+  - when : 테스트를 진행할 동작(대상), **언제** 테스트를 진행하는지 알려줌(🤔어떤것의 대한 테스트가 맞지 않나)
+  - then : 예상하는 값(expected)와 테스트의 결과값(actual)를 검증하는 영역, **그렇다면 뭔데?** 
+-JUnit을 사용한 테스트 케이스
+  - JUnit : Java 언어로 만들어진 애플리케이션을 테스트하기 위한 **Java의 표준 테스트 프레임워크**
+  - 기본 구조 : **void 타입의 메서드**에 **@Test** 애너테이션을 추가한다.
+  ```java
+  public class JUnitDefaultStructure {
+    
+    @Test
+    public void test() {
+      // 테스트 로직 
+    }
+  }
+  ```
+  - Assertion : 예상하는 결과 값이 참이질 바라는 논리적인 표현(🤔 검증 성공..?)
+  - JUnit에서는 Assertion과 관련된 다양한 메서드를 사용할 수 있고, 이 사용으로 테스트 대상에 대한 Assertion을 진행! (ex. assertEquals(),assertNotNull())
+  - ⭐테스트 전처리, 후처리 : 테스트 케이스 하나를 시작하기 혹은 끝내고 나서 초기화 작업 등의 과정이 필요한 경우가 있다.(예를 들어 DB에 값이 저장되는 경우)
+  - @BeforeEach : 각각의 테스트 케이스 실행 전에 행하는 과정
+  - @BeforeAll : 클래스 레벨에서 테스트 케이스를 한꺼번에 실행할 경우, 테스트 진행 전에 진행하는 초기화 작업
