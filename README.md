@@ -273,7 +273,7 @@
   - given : 테스트에 필요한 전제 조건(전달되는 입력값 등), 테스트에 **주어진** 값
   - when : 테스트를 진행할 동작(대상), **언제** 테스트를 진행하는지 알려줌(🤔어떤것의 대한 테스트가 맞지 않나)
   - then : 예상하는 값(expected)와 테스트의 결과값(actual)를 검증하는 영역, **그렇다면 뭔데?** 
--JUnit을 사용한 테스트 케이스
+- JUnit을 사용한 테스트 케이스(단위 테스트)
   - JUnit : Java 언어로 만들어진 애플리케이션을 테스트하기 위한 **Java의 표준 테스트 프레임워크**
   - 기본 구조 : **void 타입의 메서드**에 **@Test** 애너테이션을 추가한다.
   ```java
@@ -290,3 +290,56 @@
   - ⭐테스트 전처리, 후처리 : 테스트 케이스 하나를 시작하기 혹은 끝내고 나서 초기화 작업 등의 과정이 필요한 경우가 있다.(예를 들어 DB에 값이 저장되는 경우)
   - @BeforeEach : 각각의 테스트 케이스 실행 전에 행하는 과정
   - @BeforeAll : 클래스 레벨에서 테스트 케이스를 한꺼번에 실행할 경우, 테스트 진행 전에 진행하는 초기화 작업
+
+***
+
+### 12월 11일 
+- Hamcrest : JUnit 기반의 단위 테스트에서 사용할 수 있는 Assertion 프레임워크
+  - Assertion을 위한 매쳐(Matcher)가 자연스러운 문장으로 이어져 가독성이 좋음
+  - 테스트 실패 메세지를 이해하기 쉬움
+```java
+    // JUnit에서의 Assertion                  // Hamcrest에서의 Assertion
+    assertEquals(expected, actual);          assertThat(autual, is(equalTo(expected)));
+```
+  -`assertThat(실제값, 예상한 값)` : 발생하는 예외나, null 값도 `is(NullPointerException.class)`, `is(nullValue())`식으로 예상한 값의 파라미터를 입력할 수 있다.
+  
+#### 슬라이스 테스트
+특정 계층만 잘라서 테스트하는 것을 말한다. 단위 테스트에서는 테스트 메서드에 `@Test` 애너테이션을 추가한 것만으로도 진행이 되었지만, 슬라이스 테스트의 경우에는 테스트 클래스를 Application Context로 생성해야 한다.
+
+1. API 계층 
+   - `@SpringBootTest` : Spring Boot 기반의 애플리케이션을 테스트 하기 위한 Application Context를 생성한다.
+   - `@AutoConfigureMockMvc` : 테스트를 위한 애플리케이션의 자동 구성 작업을 해준다.(MockMvc 기능을 사용하려면 반드시 추가해야 함)
+
+> 🧐 Application Context : 애플리케이션에 필요한 Bean 객체들이 등록되어 있다.
+
+  - **MockMvc** : Spring MVC 테스트 프레임워크, 서버를 실행하지 않고 테스트할 수 있는 환경을 지원해준다. (목업할 때의 그 목! 가짜 MVC)
+  - `@Autowired` : 의존성 주입(DI)을 나타내는 애너테이션. 타입으로 의존성을 주입하는 방식을 택하며 변수, 생성자, Setter, 일반 메서드에 사용 가능하다.
+  - **Gson** : Json 변환 라이브러리로서 실제 로직에서는 Mapper를 이용해 직렬화를 하지만, 테스팅 코드에서는 Gson을 이용해 변환을 한다. <br/>dependencies `com.google.code.gson:gson`을 추가해야 사용할 수 있다.
+- Given : 테스트를 위한 전제 조건 -> 클라이언트가 요청 시 보내오는 값들!
+- When : 테스트를 진행할 로직 
+  - **ResultActions** : **MockMvc**의 `perform()` 메서드로 리턴되는 인터페이스로,`andExpect()`,`andDo()`,`andReturn()` 메서드를 사용할 수 있다.
+  - **MockMvc**의 `perform()` : MockMvc를 통해 테스트할 동작을 수행하는 메서드, `MockMvcRequestBuilders`의 메서드로 요청 테스트를 수행한다. 
+- then : 테스트 검증 단계
+  - **MockMvcResultMatchers** : 실행 결과를 검증할 때 사용하는 static 메서드, **ResultActions** 메서드의 파라미터 값으로 들어가 검증을 수행한다.
+  - **MvcResult** : 실행된 테스트의 결과를 담기는 인터페이스 
+
+2. 데이터 액세스 계층 
+☝데이터 액세스 계층에 대한 테스트를 하기 전 가장 중요하게 지켜야 할 규칙!
+<br/>DB의 상태를 테스트 케이스 실행 전으로 되돌려 깨끗한 상태를 유지하는 것! 테스트 클래스에 담긴 테스트들은 순서가 정해지지 않은 채로 실행되기 때문에 `postTest`보다 `getTest`가 먼저 실행되면 테스트가 실패함
+
+#### Mockito
+Mocking 라이브러리. Mock 객를 생성하고 해당 개겣가 진짜처럼 동작할 수 있도록 도와주는 역할을 한다. 해당 기능을 통해 테스트하고자 하는 대상에서 다른 영역을 단절시켜 테스트 대상에만 집중할 수 있도록 한다.
+<br/> 
+예를 들어, Controller는 실질적으로 Service가 연동되어 있어 정확한 테스트가 어렵다. 이때 Service를 Mocking 해 MockService를 생성해 테스트를 진행하는 것이다.
+
+- `@MockBean` : Application Context에 등록되어 있는 Bean에 대한 Mockito Mock 객체를 생성하고 주입해주는 역할을 한다.
+  - 필드에 해당 애너테이션을 추가하면 가짜 Mock 객체를 생성해 DI! 만약 `MemberService`에 해당 애너테이션을 추가하면 테스팅 코드에서 사용되는 `MemberService`는 가짜(Mock)인 것
+- Mockito에서 지원하는 **Stubbing** 메서드
+  - Stubbing : 테스트를 위해 Mock 객체가 항상 일정한 동작을 하도록 지정하는 것
+  ```java
+    given(memberService.createMember(Mockito.any(Member.class))).willReturn(member);
+  ```
+  - given() : Mock 객체가 특정 값을 리턴하는 동작을 지정하는데 사용 (when(), doNoting() 등이 존재)
+  - memberService -> MockMemberService!
+  - createMember()의 파라미터 Mockito.any(Member.class) : Mockito에서 지원하는 변수 타입 중 하나, Member.class의 Mock 객체를 생성!
+  - willReturn(member) : MockMemberService가 createMember()를 통해 리턴할 Stub 데이터
